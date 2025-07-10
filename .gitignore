@@ -1,0 +1,38 @@
+# Virtual environments
+.venv/
+venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Editor / OS files
+.DS_Store
+*.swp
+
+# Datasets
+datasets/
+Test_img/
+
+# Predictions
+Prediction_results/
+
+# Training runs
+runs/
+Seg_data1/
+
+# Hyperparameters
+best_HP/
+
+# Trained_models
+Trained_models/
+
+# Models
+yolo11x-obb.pt
+yolo11x-seg.pt
