@@ -12,10 +12,10 @@ obb_models = ["yolo11n-obb.pt", "yolo11s-obb.pt", "yolo11m-obb.pt", "yolo11l-obb
 device = torch.device("cuda:0")
 
 train_args = {
-    "data": "C:\Python Projects\datasets\Exponat_img\data.yaml",
-    "epochs": 30,         # Number of training epochs
-    "batch": 8,      # 8/16/32?
-    "imgsz": 640,          # Image size
+    "data": "datasets\Exponat_img\data.yaml",
+    "epochs": 30,          
+    "batch": 8,            # 8/16
+    "imgsz": 640,          # 640 Pretrained
 }
 
 def tuning(model_list, train_args):

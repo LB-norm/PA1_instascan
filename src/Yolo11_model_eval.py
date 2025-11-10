@@ -6,14 +6,98 @@ import os
 import pandas as pd
 import visualization
 from shapely.geometry import Polygon
+import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon as MplPolygon
 
 print(torch.cuda.is_available())
 print(torch.cuda.get_device_name(0))
 device = torch.device("cuda:0")
 
 model_folder = r"Trained_models"
-import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon as MplPolygon
+
+# Load polygons from text files
+ground_truth_path = r"datasets\Exponat_img\test\labels"
+normed_ground_truth_path = r"C:\Python_Projects\PA1 SKALA YOLO\datasets\Exponat_img\test\normed_labels"
+
+Segmentation_B8_yolo11l_seg = r"Prediction_results\Segmentation\Segmentation_B8_yolo11l-seg\predict\labels"
+Segmentation_B8_yolo11m_seg = r"Prediction_results\Segmentation\Segmentation_B8_yolo11m-seg\predict\labels"
+Segmentation_B8_yolo11n_seg = r"Prediction_results\Segmentation\Segmentation_B8_yolo11n-seg\predict\labels"
+Segmentation_B8_yolo11s_seg = r"Prediction_results\Segmentation\Segmentation_B8_yolo11s-seg\predict\labels"
+Segmentation_B8_yolo11x_seg = r"Prediction_results\Segmentation\Segmentation_B8_yolo11x-seg\predict\labels"
+
+Segmentation_B16_yolo11l_seg = r"Prediction_results\Segmentation\Segmentation_B16_yolo11l-seg\predict\labels"
+Segmentation_B16_yolo11m_seg = r"Prediction_results\Segmentation\Segmentation_B16_yolo11m-seg\predict\labels"
+Segmentation_B16_yolo11n_seg = r"Prediction_results\Segmentation\Segmentation_B16_yolo11n-seg\predict\labels"
+Segmentation_B16_yolo11s_seg = r"Prediction_results\Segmentation\Segmentation_B16_yolo11s-seg\predict\labels"
+Segmentation_B16_yolo11x_seg = r"Prediction_results\Segmentation\Segmentation_B16_yolo11x-seg\predict\labels"
+
+Normed_Segmentation_B8_yolo11l_seg = r"Prediction_results\Segmentation_normed\Segmentation_B8_yolo11l-seg\predict\labels"
+Normed_Segmentation_B8_yolo11m_seg = r"Prediction_results\Segmentation_normed\Segmentation_B8_yolo11m-seg\predict\labels"
+Normed_Segmentation_B8_yolo11n_seg = r"Prediction_results\Segmentation_normed\Segmentation_B8_yolo11n-seg\predict\labels"
+Normed_Segmentation_B8_yolo11s_seg = r"Prediction_results\Segmentation_normed\Segmentation_B8_yolo11s-seg\predict\labels"
+Normed_Segmentation_B8_yolo11x_seg = r"Prediction_results\Segmentation_normed\Segmentation_B8_yolo11x-seg\predict\labels"
+
+Normed_Segmentation_B16_yolo11l_seg = r"Prediction_results\Segmentation_normed\Segmentation_B16_yolo11l-seg\predict\labels"
+Normed_Segmentation_B16_yolo11m_seg = r"Prediction_results\Segmentation_normed\Segmentation_B16_yolo11m-seg\predict\labels"
+Normed_Segmentation_B16_yolo11n_seg = r"Prediction_results\Segmentation_normed\Segmentation_B16_yolo11n-seg\predict\labels"
+Normed_Segmentation_B16_yolo11s_seg = r"Prediction_results\Segmentation_normed\Segmentation_B16_yolo11s-seg\predict\labels"
+Normed_Segmentation_B16_yolo11x_seg = r"Prediction_results\Segmentation_normed\Segmentation_B16_yolo11x-seg\predict\labels"
+
+OBB_B8_yolo11l_obb = r"Prediction_results\OBB\OBB_B8_yolo11l-obb\predict\labels"
+OBB_B8_yolo11m_obb = r"Prediction_results\OBB\OBB_B8_yolo11m-obb\predict\labels"
+OBB_B8_yolo11n_obb = r"Prediction_results\OBB\OBB_B8_yolo11n-obb\predict\labels"
+OBB_B8_yolo11s_obb = r"Prediction_results\OBB\OBB_B8_yolo11s-obb\predict\labels"
+OBB_B8_yolo11x_obb = r"Prediction_results\OBB\OBB_B8_yolo11x-obb\predict\labels"
+
+OBB_B16_yolo11l_obb = r"Prediction_results\OBB\OBB_B16_yolo11l-obb\predict\labels"
+OBB_B16_yolo11m_obb = r"Prediction_results\OBB\OBB_B16_yolo11m-obb\predict\labels"
+OBB_B16_yolo11n_obb = r"Prediction_results\OBB\OBB_B16_yolo11n-obb\predict\labels"
+OBB_B16_yolo11s_obb = r"Prediction_results\OBB\OBB_B16_yolo11s-obb\predict\labels"
+OBB_B16_yolo11x_obb = r"Prediction_results\OBB\OBB_B16_yolo11x-obb\predict\labels"
+
+rule_based_pred = r"Prediction_results\Rule_based_predictions"
+
+#Get label files
+ground_truth_files = sorted([os.path.join(ground_truth_path, f) for f in os.listdir(ground_truth_path)])
+normed_ground_truth_files = sorted([os.path.join(normed_ground_truth_path, f) for f in os.listdir(normed_ground_truth_path)])
+
+Segmentation_B8_yolo11l_seg_files = sorted([os.path.join(Segmentation_B8_yolo11l_seg, f) for f in os.listdir(Segmentation_B8_yolo11l_seg)])
+Segmentation_B8_yolo11m_seg_files = sorted([os.path.join(Segmentation_B8_yolo11m_seg, f) for f in os.listdir(Segmentation_B8_yolo11m_seg)])
+Segmentation_B8_yolo11n_seg_files = sorted([os.path.join(Segmentation_B8_yolo11n_seg, f) for f in os.listdir(Segmentation_B8_yolo11n_seg)])
+Segmentation_B8_yolo11s_seg_files = sorted([os.path.join(Segmentation_B8_yolo11s_seg, f) for f in os.listdir(Segmentation_B8_yolo11s_seg)])
+Segmentation_B8_yolo11x_seg_files = sorted([os.path.join(Segmentation_B8_yolo11x_seg, f) for f in os.listdir(Segmentation_B8_yolo11x_seg)])
+
+Segmentation_B16_yolo11l_seg_files = sorted([os.path.join(Segmentation_B16_yolo11l_seg, f) for f in os.listdir(Segmentation_B16_yolo11l_seg)])
+Segmentation_B16_yolo11m_seg_files = sorted([os.path.join(Segmentation_B16_yolo11m_seg, f) for f in os.listdir(Segmentation_B16_yolo11m_seg)])
+Segmentation_B16_yolo11n_seg_files = sorted([os.path.join(Segmentation_B16_yolo11n_seg, f) for f in os.listdir(Segmentation_B16_yolo11n_seg)])
+Segmentation_B16_yolo11s_seg_files = sorted([os.path.join(Segmentation_B16_yolo11s_seg, f) for f in os.listdir(Segmentation_B16_yolo11s_seg)])
+Segmentation_B16_yolo11x_seg_files = sorted([os.path.join(Segmentation_B16_yolo11x_seg, f) for f in os.listdir(Segmentation_B16_yolo11x_seg)])
+
+Normed_Segmentation_B8_yolo11l_seg_files = sorted([os.path.join(Normed_Segmentation_B8_yolo11l_seg, f) for f in os.listdir(Normed_Segmentation_B8_yolo11l_seg)])
+Normed_Segmentation_B8_yolo11m_seg_files = sorted([os.path.join(Normed_Segmentation_B8_yolo11m_seg, f) for f in os.listdir(Normed_Segmentation_B8_yolo11m_seg)])
+Normed_Segmentation_B8_yolo11n_seg_files = sorted([os.path.join(Normed_Segmentation_B8_yolo11n_seg, f) for f in os.listdir(Normed_Segmentation_B8_yolo11n_seg)])
+Normed_Segmentation_B8_yolo11s_seg_files = sorted([os.path.join(Normed_Segmentation_B8_yolo11s_seg, f) for f in os.listdir(Normed_Segmentation_B8_yolo11s_seg)])
+Normed_Segmentation_B8_yolo11x_seg_files = sorted([os.path.join(Normed_Segmentation_B8_yolo11x_seg, f) for f in os.listdir(Normed_Segmentation_B8_yolo11x_seg)])
+
+Normed_Segmentation_B16_yolo11l_seg_files = sorted([os.path.join(Normed_Segmentation_B16_yolo11l_seg, f) for f in os.listdir(Normed_Segmentation_B16_yolo11l_seg)])
+Normed_Segmentation_B16_yolo11m_seg_files = sorted([os.path.join(Normed_Segmentation_B16_yolo11m_seg, f) for f in os.listdir(Normed_Segmentation_B16_yolo11m_seg)])
+Normed_Segmentation_B16_yolo11n_seg_files = sorted([os.path.join(Normed_Segmentation_B16_yolo11n_seg, f) for f in os.listdir(Normed_Segmentation_B16_yolo11n_seg)])
+Normed_Segmentation_B16_yolo11s_seg_files = sorted([os.path.join(Normed_Segmentation_B16_yolo11s_seg, f) for f in os.listdir(Normed_Segmentation_B16_yolo11s_seg)])
+Normed_Segmentation_B16_yolo11x_seg_files = sorted([os.path.join(Normed_Segmentation_B16_yolo11x_seg, f) for f in os.listdir(Normed_Segmentation_B16_yolo11x_seg)])
+
+OBB_B8_yolo11l_obb_files = sorted([os.path.join(OBB_B8_yolo11l_obb, f) for f in os.listdir(OBB_B8_yolo11l_obb)])
+OBB_B8_yolo11m_obb_files = sorted([os.path.join(OBB_B8_yolo11m_obb, f) for f in os.listdir(OBB_B8_yolo11m_obb)])
+OBB_B8_yolo11n_obb_files = sorted([os.path.join(OBB_B8_yolo11n_obb, f) for f in os.listdir(OBB_B8_yolo11n_obb)])
+OBB_B8_yolo11s_obb_files = sorted([os.path.join(OBB_B8_yolo11s_obb, f) for f in os.listdir(OBB_B8_yolo11s_obb)])
+OBB_B8_yolo11x_obb_files = sorted([os.path.join(OBB_B8_yolo11x_obb, f) for f in os.listdir(OBB_B8_yolo11x_obb)])
+
+OBB_B16_yolo11l_obb_files = sorted([os.path.join(OBB_B16_yolo11l_obb, f) for f in os.listdir(OBB_B16_yolo11l_obb)])
+OBB_B16_yolo11m_obb_files = sorted([os.path.join(OBB_B16_yolo11m_obb, f) for f in os.listdir(OBB_B16_yolo11m_obb)])
+OBB_B16_yolo11n_obb_files = sorted([os.path.join(OBB_B16_yolo11n_obb, f) for f in os.listdir(OBB_B16_yolo11n_obb)])
+OBB_B16_yolo11s_obb_files = sorted([os.path.join(OBB_B16_yolo11s_obb, f) for f in os.listdir(OBB_B16_yolo11s_obb)])
+OBB_B16_yolo11x_obb_files = sorted([os.path.join(OBB_B16_yolo11x_obb, f) for f in os.listdir(OBB_B16_yolo11x_obb)])
+
+rule_based_pred_files = sorted([os.path.join(rule_based_pred, f) for f in os.listdir(rule_based_pred)])
 
 def plot_polygons(pred_polygon, gt_polygon, title="Polygon Comparison"):
     """
@@ -100,127 +184,45 @@ def calculate_polygon_iou(pred_coords, gt_coords):
 
     return intersection / union
 
-# def evaluate_segmentation(predictions, ground_truths, iou_threshold=0.5):
-#     tp, fp, fn = 0, 0, 0
-#     used_gt = set()
+def evaluate_segmentation(predictions, ground_truths, iou_threshold=0.5):
+    tp, fp, fn = 0, 0, 0
+    used_gt = set()
 
-#     for pred in predictions:
-#         best_iou = 0
-#         best_gt = None
+    for pred in predictions:
+        best_iou = 0
+        best_gt = None
 
-#         for i, gt in enumerate(ground_truths):
-#             if i in used_gt:
-#                 continue
-#             iou = calculate_polygon_iou(pred["coords"], gt["coords"])
-#             if iou > best_iou:
-#                 best_iou = iou
-#                 best_gt = i
+        for i, gt in enumerate(ground_truths):
+            if i in used_gt:
+                continue
+            iou = calculate_polygon_iou(pred["coords"], gt["coords"])
+            if iou > best_iou:
+                best_iou = iou
+                best_gt = i
 
-#         if best_iou >= iou_threshold:
-#             tp += 1
-#             used_gt.add(best_gt)
-#         else:
-#             fp += 1
+        if best_iou >= iou_threshold:
+            tp += 1
+            used_gt.add(best_gt)
+        else:
+            fp += 1
 
-#     fn = len(ground_truths) - len(used_gt)
-#     precision = tp / (tp + fp) if (tp + fp) > 0 else 0
-#     recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+    fn = len(ground_truths) - len(used_gt)
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0
 
-#     return {"precision": precision, "recall": recall, "TP": tp, "FP": fp, "FN": fn}
+    return {"precision": precision, "recall": recall, "TP": tp, "FP": fp, "FN": fn}
 
-# Load polygons from text files
-ground_truth_path = r"datasets\Exponat_img\test\labels"
-normed_ground_truth_path = r"C:\Python_Projects\PA1 SKALA YOLO\datasets\Exponat_img\test\normed_labels"
-
-Segmentation_B8_yolo11l_seg = r"Prediction_results\Segmentation\Segmentation_B8_yolo11l-seg\predict\labels"
-Segmentation_B8_yolo11m_seg = r"Prediction_results\Segmentation\Segmentation_B8_yolo11m-seg\predict\labels"
-Segmentation_B8_yolo11n_seg = r"Prediction_results\Segmentation\Segmentation_B8_yolo11n-seg\predict\labels"
-Segmentation_B8_yolo11s_seg = r"Prediction_results\Segmentation\Segmentation_B8_yolo11s-seg\predict\labels"
-Segmentation_B8_yolo11x_seg = r"Prediction_results\Segmentation\Segmentation_B8_yolo11x-seg\predict\labels"
-
-Segmentation_B16_yolo11l_seg = r"Prediction_results\Segmentation\Segmentation_B16_yolo11l-seg\predict\labels"
-Segmentation_B16_yolo11m_seg = r"Prediction_results\Segmentation\Segmentation_B16_yolo11m-seg\predict\labels"
-Segmentation_B16_yolo11n_seg = r"Prediction_results\Segmentation\Segmentation_B16_yolo11n-seg\predict\labels"
-Segmentation_B16_yolo11s_seg = r"Prediction_results\Segmentation\Segmentation_B16_yolo11s-seg\predict\labels"
-Segmentation_B16_yolo11x_seg = r"Prediction_results\Segmentation\Segmentation_B16_yolo11x-seg\predict\labels"
-
-Normed_Segmentation_B8_yolo11l_seg = r"Prediction_results\Segmentation_normed\Segmentation_B8_yolo11l-seg\predict\labels"
-Normed_Segmentation_B8_yolo11m_seg = r"Prediction_results\Segmentation_normed\Segmentation_B8_yolo11m-seg\predict\labels"
-Normed_Segmentation_B8_yolo11n_seg = r"Prediction_results\Segmentation_normed\Segmentation_B8_yolo11n-seg\predict\labels"
-Normed_Segmentation_B8_yolo11s_seg = r"Prediction_results\Segmentation_normed\Segmentation_B8_yolo11s-seg\predict\labels"
-Normed_Segmentation_B8_yolo11x_seg = r"Prediction_results\Segmentation_normed\Segmentation_B8_yolo11x-seg\predict\labels"
-
-Normed_Segmentation_B16_yolo11l_seg = r"Prediction_results\Segmentation_normed\Segmentation_B16_yolo11l-seg\predict\labels"
-Normed_Segmentation_B16_yolo11m_seg = r"Prediction_results\Segmentation_normed\Segmentation_B16_yolo11m-seg\predict\labels"
-Normed_Segmentation_B16_yolo11n_seg = r"Prediction_results\Segmentation_normed\Segmentation_B16_yolo11n-seg\predict\labels"
-Normed_Segmentation_B16_yolo11s_seg = r"Prediction_results\Segmentation_normed\Segmentation_B16_yolo11s-seg\predict\labels"
-Normed_Segmentation_B16_yolo11x_seg = r"Prediction_results\Segmentation_normed\Segmentation_B16_yolo11x-seg\predict\labels"
-
-OBB_B8_yolo11l_obb = r"Prediction_results\OBB\OBB_B8_yolo11l-obb\predict\labels"
-OBB_B8_yolo11m_obb = r"Prediction_results\OBB\OBB_B8_yolo11m-obb\predict\labels"
-OBB_B8_yolo11n_obb = r"Prediction_results\OBB\OBB_B8_yolo11n-obb\predict\labels"
-OBB_B8_yolo11s_obb = r"Prediction_results\OBB\OBB_B8_yolo11s-obb\predict\labels"
-OBB_B8_yolo11x_obb = r"Prediction_results\OBB\OBB_B8_yolo11x-obb\predict\labels"
-
-OBB_B16_yolo11l_obb = r"Prediction_results\OBB\OBB_B16_yolo11l-obb\predict\labels"
-OBB_B16_yolo11m_obb = r"Prediction_results\OBB\OBB_B16_yolo11m-obb\predict\labels"
-OBB_B16_yolo11n_obb = r"Prediction_results\OBB\OBB_B16_yolo11n-obb\predict\labels"
-OBB_B16_yolo11s_obb = r"Prediction_results\OBB\OBB_B16_yolo11s-obb\predict\labels"
-OBB_B16_yolo11x_obb = r"Prediction_results\OBB\OBB_B16_yolo11x-obb\predict\labels"
-
-rule_based_pred = r"Prediction_results\Rule_based_predictions"
-#Get label files
-ground_truth_files = sorted([os.path.join(ground_truth_path, f) for f in os.listdir(ground_truth_path)])
-normed_ground_truth_files = sorted([os.path.join(normed_ground_truth_path, f) for f in os.listdir(normed_ground_truth_path)])
-
-Segmentation_B8_yolo11l_seg_files = sorted([os.path.join(Segmentation_B8_yolo11l_seg, f) for f in os.listdir(Segmentation_B8_yolo11l_seg)])
-Segmentation_B8_yolo11m_seg_files = sorted([os.path.join(Segmentation_B8_yolo11m_seg, f) for f in os.listdir(Segmentation_B8_yolo11m_seg)])
-Segmentation_B8_yolo11n_seg_files = sorted([os.path.join(Segmentation_B8_yolo11n_seg, f) for f in os.listdir(Segmentation_B8_yolo11n_seg)])
-Segmentation_B8_yolo11s_seg_files = sorted([os.path.join(Segmentation_B8_yolo11s_seg, f) for f in os.listdir(Segmentation_B8_yolo11s_seg)])
-Segmentation_B8_yolo11x_seg_files = sorted([os.path.join(Segmentation_B8_yolo11x_seg, f) for f in os.listdir(Segmentation_B8_yolo11x_seg)])
-
-Segmentation_B16_yolo11l_seg_files = sorted([os.path.join(Segmentation_B16_yolo11l_seg, f) for f in os.listdir(Segmentation_B16_yolo11l_seg)])
-Segmentation_B16_yolo11m_seg_files = sorted([os.path.join(Segmentation_B16_yolo11m_seg, f) for f in os.listdir(Segmentation_B16_yolo11m_seg)])
-Segmentation_B16_yolo11n_seg_files = sorted([os.path.join(Segmentation_B16_yolo11n_seg, f) for f in os.listdir(Segmentation_B16_yolo11n_seg)])
-Segmentation_B16_yolo11s_seg_files = sorted([os.path.join(Segmentation_B16_yolo11s_seg, f) for f in os.listdir(Segmentation_B16_yolo11s_seg)])
-Segmentation_B16_yolo11x_seg_files = sorted([os.path.join(Segmentation_B16_yolo11x_seg, f) for f in os.listdir(Segmentation_B16_yolo11x_seg)])
-
-Normed_Segmentation_B8_yolo11l_seg_files = sorted([os.path.join(Normed_Segmentation_B8_yolo11l_seg, f) for f in os.listdir(Normed_Segmentation_B8_yolo11l_seg)])
-Normed_Segmentation_B8_yolo11m_seg_files = sorted([os.path.join(Normed_Segmentation_B8_yolo11m_seg, f) for f in os.listdir(Normed_Segmentation_B8_yolo11m_seg)])
-Normed_Segmentation_B8_yolo11n_seg_files = sorted([os.path.join(Normed_Segmentation_B8_yolo11n_seg, f) for f in os.listdir(Normed_Segmentation_B8_yolo11n_seg)])
-Normed_Segmentation_B8_yolo11s_seg_files = sorted([os.path.join(Normed_Segmentation_B8_yolo11s_seg, f) for f in os.listdir(Normed_Segmentation_B8_yolo11s_seg)])
-Normed_Segmentation_B8_yolo11x_seg_files = sorted([os.path.join(Normed_Segmentation_B8_yolo11x_seg, f) for f in os.listdir(Normed_Segmentation_B8_yolo11x_seg)])
-
-Normed_Segmentation_B16_yolo11l_seg_files = sorted([os.path.join(Normed_Segmentation_B16_yolo11l_seg, f) for f in os.listdir(Normed_Segmentation_B16_yolo11l_seg)])
-Normed_Segmentation_B16_yolo11m_seg_files = sorted([os.path.join(Normed_Segmentation_B16_yolo11m_seg, f) for f in os.listdir(Normed_Segmentation_B16_yolo11m_seg)])
-Normed_Segmentation_B16_yolo11n_seg_files = sorted([os.path.join(Normed_Segmentation_B16_yolo11n_seg, f) for f in os.listdir(Normed_Segmentation_B16_yolo11n_seg)])
-Normed_Segmentation_B16_yolo11s_seg_files = sorted([os.path.join(Normed_Segmentation_B16_yolo11s_seg, f) for f in os.listdir(Normed_Segmentation_B16_yolo11s_seg)])
-Normed_Segmentation_B16_yolo11x_seg_files = sorted([os.path.join(Normed_Segmentation_B16_yolo11x_seg, f) for f in os.listdir(Normed_Segmentation_B16_yolo11x_seg)])
-
-OBB_B8_yolo11l_obb_files = sorted([os.path.join(OBB_B8_yolo11l_obb, f) for f in os.listdir(OBB_B8_yolo11l_obb)])
-OBB_B8_yolo11m_obb_files = sorted([os.path.join(OBB_B8_yolo11m_obb, f) for f in os.listdir(OBB_B8_yolo11m_obb)])
-OBB_B8_yolo11n_obb_files = sorted([os.path.join(OBB_B8_yolo11n_obb, f) for f in os.listdir(OBB_B8_yolo11n_obb)])
-OBB_B8_yolo11s_obb_files = sorted([os.path.join(OBB_B8_yolo11s_obb, f) for f in os.listdir(OBB_B8_yolo11s_obb)])
-OBB_B8_yolo11x_obb_files = sorted([os.path.join(OBB_B8_yolo11x_obb, f) for f in os.listdir(OBB_B8_yolo11x_obb)])
-
-OBB_B16_yolo11l_obb_files = sorted([os.path.join(OBB_B16_yolo11l_obb, f) for f in os.listdir(OBB_B16_yolo11l_obb)])
-OBB_B16_yolo11m_obb_files = sorted([os.path.join(OBB_B16_yolo11m_obb, f) for f in os.listdir(OBB_B16_yolo11m_obb)])
-OBB_B16_yolo11n_obb_files = sorted([os.path.join(OBB_B16_yolo11n_obb, f) for f in os.listdir(OBB_B16_yolo11n_obb)])
-OBB_B16_yolo11s_obb_files = sorted([os.path.join(OBB_B16_yolo11s_obb, f) for f in os.listdir(OBB_B16_yolo11s_obb)])
-OBB_B16_yolo11x_obb_files = sorted([os.path.join(OBB_B16_yolo11x_obb, f) for f in os.listdir(OBB_B16_yolo11x_obb)])
-
-rule_based_pred_files = sorted([os.path.join(rule_based_pred, f) for f in os.listdir(rule_based_pred)])
-# def calculate_IoU(pred_files, ground_truth_files):
-#     iou_list = []
-#     for pred_file, gt_file in zip(pred_files, ground_truth_files):
-#         gt_polygon = load_single_polygon_from_txt(gt_file)
-#         pred_polygon = load_single_polygon_from_txt(pred_file)
-#         # plot_polygons(pred_polygon, gt_polygon, title="Debugging IoU Calculations")
-#         # Calculate IoU
-#         iou = calculate_polygon_iou(pred_polygon, gt_polygon)
-#         print(f"IoU for {os.path.basename(pred_file)} vs {os.path.basename(gt_file)}: {iou:.2f}")
-#         iou_list.append(iou)
-#     return iou_list
+def calculate_IoU(pred_files, ground_truth_files):
+    iou_list = []
+    for pred_file, gt_file in zip(pred_files, ground_truth_files):
+        gt_polygon = load_single_polygon_from_txt(gt_file)
+        pred_polygon = load_single_polygon_from_txt(pred_file)
+        # plot_polygons(pred_polygon, gt_polygon, title="Debugging IoU Calculations")
+        # Calculate IoU
+        iou = calculate_polygon_iou(pred_polygon, gt_polygon)
+        print(f"IoU for {os.path.basename(pred_file)} vs {os.path.basename(gt_file)}: {iou:.2f}")
+        iou_list.append(iou)
+    return iou_list
 
 def calculate_IoU(pred_files, ground_truth_files):
     # Create a lookup dictionary for prediction files based on filename
